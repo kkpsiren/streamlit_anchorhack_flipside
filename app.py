@@ -1,7 +1,8 @@
 import streamlit as st
 from scripts.utils import read_flipside
 from pages.landing import landing_page
-from config import url
+from config import url, DISCORD_USERNAME
+from beautify import flipside_logo, discord_logo
 
 st.set_page_config(page_title="Flipside <3 Anchor", layout="wide")
 
@@ -32,3 +33,7 @@ Etiam at erat quis ante venenatis sagittis interdum non lorem. Phasellus vel nib
         )
 else:
     st.write("shouldn't be here")
+
+st.sidebar.markdown("#### Connect")
+discord_logo(DISCORD_USERNAME)
+flipside_logo()
