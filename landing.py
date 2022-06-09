@@ -1,5 +1,12 @@
 import streamlit as st
-from plots import number_plot, eth_plot, nft_plot, cluster_plot
+from plots import number_plot, eth_plot, nft_plot, cluster_plot, plot_groups
+
+def get_groups(data,groups):
+    data['groups'] = groups
+    data['groups'] = data['groups'].str.replace("C0","C1")
+    ans = [y for x, y in data.groupby('groups', as_index=False)]
+    return ans
+        
 
 def landing_page(df,df_minted,df_images):
     st.image('https://openseauserdata.com/files/e22c98856cf40d4efb9d2dcb69d25c9b.png')
@@ -73,10 +80,35 @@ def landing_page(df,df_minted,df_images):
     ser3 = df_minted.groupby('USER_ADDRESS')['TOKENID'].count().to_frame('minted')
 
     data = ser3.join(ser2).join(ser).fillna(0)
-
+    fig, groups = cluster_plot(data)
     st.markdown(""" ### Can you construct a “typical minter” profile/profiles based on their wallet behavior?""")
-    st.pyplot(cluster_plot(data),use_container_width=True)
+    st.pyplot(fig,use_container_width=True)
     st.markdown("""By plotting the ETH amounts, NFT history and number of minted NFTS, 
-                and computing the correlation of all the addresses we can form three groups. The one group is the 'Whales', then a second group with NFT history, then third one is the burner wallets.""")
+                and computing the correlation of all the addresses we can form four groups, C1-C4. 
+                1. C1 9 addresses belong to this group, Their median ETH balance is 6.27 ETH. They have both a single NFT as median.  
+                2. C2 These are the burner addresses. 40 % of the members own less than 0.1 ETH before minting. No NFT Purchasing history as median. 96 Addresses belong to this group.  
+                3. C3 These are also burner addresses. They own same amount of ETH than C2 but they have a single NFT Purchase as median. 10 Addresses belong to this group.  
+                4. C4 31 addresses belong to this group. They have a median ETH balance of 0.4 ETH and 10 NFTs purchased on median.
+                """)
+    g1,g2,g3,s = plot_groups(data,groups)
+    l1,l2,l3 = st.columns(3)
+    ans = get_groups(data,groups)
+    cols = "minted,ETH_balance,NFT_history,groups,USER_ADDRESS".split(',')
+    
+    with l1:
+        st.pyplot(g1,use_container_width=True)
+        with st.expander('Show DataFrame'):
+            st.dataframe(ans[0].reset_index().loc[:,cols])
+    with l2:
+        st.pyplot(g2,use_container_width=True)
+        with st.expander('Show DataFrame'):
+            st.dataframe(ans[1].reset_index().loc[:,cols])
+    with l3:
+        st.pyplot(g3,use_container_width=True)
+        with st.expander('Show DataFrame'):
+            st.dataframe(ans[2].reset_index().loc[:,cols])
+    st.write('Median Values')
+    st.dataframe(s)
+    
     
     st.write('More Analysis on these and the whole mint and aftermarket TBC')
