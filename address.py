@@ -38,6 +38,8 @@ def address_page(df,df_minted,df_images):
                 st.write(name)
         else:
             st.write('no images')
+        if selected_previous_nfts.shape[0] > 0:
+            st.write(selected_previous_nfts.drop(['BUYER_ADDRESS','name'],axis=1).sort_values('PRICE',ascending=False))
     # st.dataframe(df)
 
     # st.dataframe(df_images)
