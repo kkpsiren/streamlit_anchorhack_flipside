@@ -1,4 +1,5 @@
 import streamlit as st
+
 from plots import number_plot, eth_plot, nft_plot, cluster_plot, plot_groups
 
 def get_groups(data,groups):
@@ -80,7 +81,8 @@ def landing_page(df,df_minted,df_images):
     ser3 = df_minted.groupby('USER_ADDRESS')['TOKENID'].count().to_frame('minted')
 
     data = ser3.join(ser2).join(ser).fillna(0)
-    fig, groups = cluster_plot(data)
+    with st.spinner('Wait for it...'):
+        fig, groups = cluster_plot(data)
     st.markdown(""" ### Can you construct a “typical minter” profile/profiles based on their wallet behavior?""")
     st.pyplot(fig,use_container_width=True)
     st.markdown("""By plotting the ETH amounts, NFT history and number of minted NFTS, 

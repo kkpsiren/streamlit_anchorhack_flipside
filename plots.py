@@ -5,6 +5,7 @@ from matplotlib.ticker import ScalarFormatter, MaxNLocator
 import seaborn as sns
 from scipy.cluster import hierarchy
 from scipy.spatial.distance import pdist
+import streamlit as st
 
 
 def plot_strip(data,x,y,scale=False):
@@ -14,7 +15,8 @@ def plot_strip(data,x,y,scale=False):
         plt.yscale('log')
     sns.despine()
     return fig
-    
+
+
 def plot_groups(data, groups):
     data['groups'] = groups
     data = data.query('groups!="C0"')
@@ -44,6 +46,7 @@ def cluster_plot(data):
     groups = pd.Series(den['leaves_color_list'], index= [data.index[i] for i in den['leaves']])
     return g.fig, groups
 
+
 def number_plot(df):
     fig,ax = plt.subplots()
     df.reset_index()['TOKENID'].plot(ax=ax)
@@ -63,6 +66,7 @@ def nft_plot(df):
     sns.despine(fig=fig)
     return fig
 
+
 def plot_scatter(df):
     i = df['USER_ADDRESS'].unique()[0]
     df['BALANCE_DATE'] = pd.to_datetime(df['BALANCE_DATE'])
@@ -70,7 +74,7 @@ def plot_scatter(df):
     fig = px.scatter(df, x="BALANCE_DATE", y="BALANCE", color="SYMBOL",
                      color_discrete_sequence=px.colors.qualitative.G10,
                      template='simple_white',title=i,
-                hover_data=['SYMBOL'])
+                hover_data=['SYMBOL'],width=800, height=800)
     fig.update_layout(legend=dict(
     yanchor="top",
     y=-0.5,
