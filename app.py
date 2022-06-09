@@ -31,3 +31,4 @@ else:
 st.sidebar.markdown("#### Connect")
 discord_logo(os.getenv('DISCORD_USERNAME'))
 flipside_logo()
+flipside_logo(url="https://godmode.flipsidecrypto.xyz/")

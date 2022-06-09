@@ -1,5 +1,5 @@
 import streamlit as st
-from plots import number_plot, eth_plot, nft_plot
+from plots import number_plot, eth_plot, nft_plot, cluster_plot
 
 def landing_page(df,df_minted,df_images):
     st.image('https://openseauserdata.com/files/e22c98856cf40d4efb9d2dcb69d25c9b.png')
@@ -63,3 +63,20 @@ def landing_page(df,df_minted,df_images):
             for i in ser.index.tolist():
                 st.markdown(f'[{i}](https://etherscan.io/address/{i})')
 
+
+
+    ser = df_images.groupby('BUYER_ADDRESS')['NFT_ADDRESS'].count().to_frame('NFT_history')
+
+    a = df.query('SYMBOL=="ETH"')
+    ser2 = a[a['BALANCE']>0.1].groupby('USER_ADDRESS')['BALANCE'].mean().to_frame('ETH_balance')
+
+    ser3 = df_minted.groupby('USER_ADDRESS')['TOKENID'].count().to_frame('minted')
+
+    data = ser3.join(ser2).join(ser).fillna(0)
+
+    st.markdown(""" ### Can you construct a “typical minter” profile/profiles based on their wallet behavior?""")
+    st.pyplot(cluster_plot(data),use_container_width=True)
+    st.markdown("""By plotting the ETH amounts, NFT history and number of minted NFTS, 
+                and computing the correlation of all the addresses we can form three groups. The one group is the 'Whales', then a second group with NFT history, then third one is the burner wallets.""")
+    
+    st.write('More Analysis on these and the whole mint and aftermarket TBC')

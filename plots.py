@@ -3,6 +3,9 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+def cluster_plot(data):
+    return sns.clustermap(data.T.corr())
+
 def number_plot(df):
     fig,ax = plt.subplots()
     df.reset_index()['TOKENID'].plot(ax=ax)
