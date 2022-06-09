@@ -1,10 +1,28 @@
 import plotly.express as px
 import pandas as pd 
-import seaborn as sns
 import matplotlib.pyplot as plt
+from matplotlib.ticker import ScalarFormatter, MaxNLocator
+import seaborn as sns
+from scipy.cluster import hierarchy
+from scipy.spatial.distance import pdist
+
 
 def cluster_plot(data):
-    return sns.clustermap(data.T.corr())
+    dist = pdist(data.values, metric='correlation')
+    Z = hierarchy.linkage(dist, 'single')
+    
+    g = sns.clustermap(data.T.corr(),
+        row_linkage=Z,
+        col_linkage=Z,)
+    den = hierarchy.dendrogram(g.dendrogram_col.linkage, labels=data.index,
+                            color_threshold=0.10, distance_sort=True, ax=g.ax_col_dendrogram)
+    g.ax_col_dendrogram.axis('on')
+    # sns.despine(ax=g.ax_col_dendrogram, left=False, right=True, top=True, bottom=True)
+    g.ax_col_dendrogram.yaxis.set_major_locator(MaxNLocator())
+    g.ax_col_dendrogram.yaxis.set_major_formatter(ScalarFormatter())
+    g.ax_col_dendrogram.grid(axis='y', ls='--', color='grey')
+    # g.ax_col_dendrogram.yaxis.tick_right()
+    return g.fig
 
 def number_plot(df):
     fig,ax = plt.subplots()
