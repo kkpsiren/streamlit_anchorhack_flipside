@@ -4,7 +4,7 @@ from plots import plot_scatter
 
 def address_page(df,df_minted,df_images):
     
-    addresses = st.selectbox('Select Address', df['USER_ADDRESS'].unique())
+    addresses = st.selectbox('Select Address', df_images.sort_values('TOKEN_METADATA_URI')['BUYER_ADDRESS'].unique())
 
     selected_df = df.query('USER_ADDRESS in @addresses')
 
