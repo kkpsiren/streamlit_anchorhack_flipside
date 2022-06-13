@@ -7,8 +7,6 @@ from beautify import flipside_logo, discord_logo
 import os
 from scripts import load_queries
 from plots import plot_scatter
-from dotenv import load_dotenv
-load_dotenv()
 
 st.set_page_config(page_title="Flipside", layout="wide")
 
